@@ -1,0 +1,23 @@
+{{ define "header" }}
+
+    {{ $_global := "/static" }}
+<!DOCTYPE html>
+<html lang="cn">
+{{ template "_layout/head" . }}
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+    <!-- Main Header -->
+    <header class="main-header">
+        {{ template "_layout/header" . }}
+    </header>
+
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+        {{ template "_layout/sidebar"}}
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+
+{{ end }}
