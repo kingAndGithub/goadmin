@@ -14,10 +14,26 @@
 
     <!-- Left side column. contains the logo and sidebar -->
     <aside class="main-sidebar">
-        {{ template "_layout/sidebar"}}
+        {{ template "_layout/sidebar" . }}
     </aside>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
+
+        <section class="content-header">
+            <h1>
+                <span>Page Header</span>
+                <small>Optional description</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li class="menu-first">
+                    <a href="#">
+                        <i class="fa fa-dashboard"></i>
+                        <span>Level</span>
+                    </a>
+                </li>
+                <li class="active menu-child">Here</li>
+            </ol>
+        </section>
 
 {{ end }}

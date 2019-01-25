@@ -2,9 +2,16 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func (s AdminUser) Index(c *gin.Context) {
-	c.String(http.StatusOK, "ok")
+
+
+	s.display(c)
+}
+
+func (s AdminUser) Show(c *gin.Context) {
+
+
+	s.display(c)
 }

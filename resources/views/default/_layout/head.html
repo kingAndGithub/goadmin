@@ -26,17 +26,47 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
     <script>
         $(function () {
-            //$("#contentShow").load("resouces/views/default/{{ .name }}.html");
+
+            console.log(window.location.origin);
+
+            if ({{ ._menuSignActive }} && {{ ._menuActionSignActive }}) {
+
+                let action = "{{ ._menuActionSignActive }}";
+                action = action.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());// 首字母大写
+
+                const sign = $("#sidebar .treeview-menu li[data-sign-active={{ ._menuSignActive }}][data-action-sign-active=" + action + "]");
+                if (sign.length === 1) {
+                    const signParent = sign.parent("ul");
+                    signParent.parent("li").addClass("active");
+
+                    $(".content-wrapper .content-header h1 span").html(signParent.data("menu-name"));
+                    $(".content-wrapper .content-header h1 small").html(sign.data("child-menu-name"));
+                    $(".content-wrapper .content-header .menu-first span").html(signParent.data("menu-name"));
+                    $(".content-wrapper .content-header .menu-child").html(sign.data("child-menu-name"));
+                }
+            }
+
             $("#sidebar li").click(function () {
+                if ($(this).hasClass("header")) {
+                    return false;
+                }
                 $("#sidebar li").removeClass("active");
                 $(this).addClass("active");
             });
-        })
+            $("#sidebar .treeview-menu li").click(function () {
+                const menuName = $(this).parent("ul").data("menuName");
+                const childName = $(this).children("a").html();
+                $(".content-wrapper .content-header h1 span").html(menuName);
+                $(".content-wrapper .content-header h1 small").html(childName);
+                $(".content-wrapper .content-header .menu-first span").html(menuName);
+                $(".content-wrapper .content-header .menu-child").html(childName);
+            });
+
+        });
     </script>
 </head>
 {{ end }}

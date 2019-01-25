@@ -10,33 +10,52 @@
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
-        <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search...">
-                <span class="input-group-btn">
-              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-              </button>
-            </span>
-            </div>
-        </form>
+
+        {{/*<form action="#" method="get" class="sidebar-form">*/}}
+            {{/*<div class="input-group">*/}}
+                {{/*<input type="text" name="q" class="form-control" placeholder="Search...">*/}}
+                {{/*<span class="input-group-btn">*/}}
+              {{/*<button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>*/}}
+              {{/*</button>*/}}
+            {{/*</span>*/}}
+            {{/*</div>*/}}
+        {{/*</form>*/}}
         <ul class="sidebar-menu" data-widget="tree" id="sidebar">
             <li class="header">HEADER</li>
-            <li class="active"><a href="#"><i class="fa fa-link"></i> <span>Link</span></a></li>
-            <li><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>
-            <li class="treeview">
-                <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
-                    <span class="pull-right-container">
-                <i class="fa fa-angle-left pull-right"></i>
-              </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="#">Link in level 2</a></li>
-                    <li><a href="#">Link in level 2</a></li>
-                </ul>
-            </li>
+            {{ range $k, $menu := ._column.Menus }}
+                {{ if eq $menu.HasNode false }}
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-link"></i>
+                            <span>{{ $menu.Name }}</span>
+                        </a>
+                    </li>
+                {{ else }}
+                    <li class="treeview" data-cid="{{ $k }}">
+                        <a href="#">
+                            <i class="fa fa-link"></i>
+                            <span>{{ $menu.Name }}</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu" data-menu-name="{{ $menu.Name }}">
+                            {{ range $childMenu := $menu.Nodes }}
+                                <li data-child-menu-name="{{ $childMenu.Name }}" data-sign-active="{{ $childMenu.Sign }}" data-action-sign-active="{{ $childMenu.DefaultSign }}">
+                                    <a href="javascript:;" onclick="JumpUrl({{ $childMenu.Sign }}, {{ $childMenu.DefaultSign }});">{{ $childMenu.Name }}</a>
+                                </li>
+                            {{ end }}
+                        </ul>
+                    </li>
+                {{ end }}
+            {{ end }}
         </ul>
     </section>
-
+    <script>
+        function JumpUrl(path, action) {
+            window.location.href = window.location.origin + "/" + path + "/" + action.toLowerCase();
+        }
+    </script>
     <!-- /.control-sidebar -->
     <!-- Add the sidebar's background. This div must be placed
     immediately after the control sidebar -->

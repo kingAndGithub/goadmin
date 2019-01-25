@@ -1,7 +1,6 @@
 package route
 
 import (
-	"admin/auth"
 	"admin/controllers"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -10,9 +9,7 @@ import (
 	"strings"
 )
 
-// 加载所有控制器
-var controllerSet = controllers.Controllers
-
+var controllerSet = make(map[string]interface{})
 var methods = make(map[string]map[string]reflect.Method)
 
 func Run() {
@@ -24,13 +21,16 @@ func Run() {
 	// 加载模板文件
 	g.LoadHTMLGlob("resources/views/**/**/*")
 
-	column := auth.Init()
+	column := controllers.GetColumn()
 	for _, menus := range column.Menus {
 		for _, childs := range menus.Nodes {
+			controllerSet[childs.Sign] = childs.Controller
 			methods[childs.Sign] = make(map[string]reflect.Method)
 			for _, action := range childs.Actions {
-				m := reflect.TypeOf(controllerSet[childs.Sign])
+
+				m := reflect.TypeOf(childs.Controller)
 				mf, exist := m.MethodByName(action.Sign)
+
 				if !exist {
 					panic("不存在的方法：" + childs.Sign + "/" + action.Sign)
 				}
@@ -49,10 +49,7 @@ func Run() {
 		}
 	}
 
-	g.GET("/", func(c *gin.Context) {
-
-		c.HTML(http.StatusOK, "show/show", nil)
-	})
+	g.GET("/", controllers.AdminUser{}.Index)
 
 	g.GET("/test", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "test/test", nil)
@@ -66,18 +63,21 @@ func Run() {
 }
 
 func doHandle(ctx *gin.Context) {
+
 	//获取path
 	paths := strings.Split(ctx.Request.URL.Path,"/")
+	pathsLen := len(paths)
 
-	fmt.Println(paths[1], paths[2])
+	if pathsLen == 2 {
+		if paths[1] == "" {
+			paths[1] = "Index"
+		}
+		paths = append(paths, "index")
+	}
 
-	vals := make([]reflect.Value, 2)
-
-	vals[0] = reflect.ValueOf(controllerSet[paths[1]])
-	vals[1] = reflect.ValueOf(ctx)
-
-	fmt.Println(vals[0])
-	fmt.Println(methods)
 	//反射进行调用
-	methods[paths[1]][paths[2]].Func.Call(vals)
+	methods[paths[1]][paths[2]].Func.Call([]reflect.Value{
+		reflect.ValueOf(controllerSet[paths[1]]), // 映射的结构体
+		reflect.ValueOf(ctx), // 传参
+	})
 }
